@@ -1,0 +1,56 @@
+---
+# tasks file for doctorinsta.infra
+- name: Updating cache ...
+  yum: name=* state=latest
+  become: true 
+
+- name: Installing apache ...
+  yum: name=httpd24 state=latest
+  become: true
+
+- name: Starting apache ...
+  service: name=httpd state=started
+  become: true
+
+- name: Installing php and dependent php modules ...
+  yum: name=php55 state=present 
+  become: true
+
+- name: Installing dependent php modules
+  yum: name={{ item }} state=present
+  become: true
+  with_items:
+      - libevent-devel
+      - libjpeg-devel
+      - mysql-devel
+      - gcc
+      - git
+      - python27-devel
+      - mysql55
+      - php55-devel
+      - php55-cli
+      - php55-pecl-apc
+      - php55-pdo
+      - php55-xml
+      - php55-gd
+      - php55-mysqlnd
+      - php55-mbstring
+      - php55-mcrypt
+
+- name: Installing pip ...
+  yum: name=python-pip state=present
+  become: true
+
+- name: Installing Virtualenv ...
+  pip: name=virtualenv
+  become: true
+
+- name: Creating php users ...
+  user: name={{ item }} shell=/bin/bash
+  become: true
+  with_items:
+      - doctorinsta
+      - dysruptor
+      - pwwebapp
+      - webappuser
+
